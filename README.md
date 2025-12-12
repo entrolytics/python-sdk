@@ -1,20 +1,87 @@
-# Entrolytics Python SDK
+<div align="center">
+  <img src="https://raw.githubusercontent.com/entrolytics/.github/main/media/entrov2.png" alt="Entrolytics" width="64" height="64">
 
-Python SDK for [Entrolytics](https://ng.entrolytics.click) - First-party growth analytics for the edge.
+  [![PyPI](https://img.shields.io/pypi/v/entrolytics-ng.svg?logo=pypi&logoColor=white)](https://pypi.org/project/entrolytics-ng/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+  [![Python](https://img.shields.io/badge/Python-3.9+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+
+</div>
+
+---
+
+## Overview
+
+**entrolytics-ng** is the official Python SDK for Entrolytics - first-party growth analytics for the edge. Track events server-side from Django, FastAPI, Flask, or any Python application.
+
+**Why use this SDK?**
+- Django, FastAPI, and Flask integrations included
+- Async support with `AsyncEntrolytics` client
+- Intelligent routing to optimal collection endpoints
+- TypeScript-like type hints throughout
+
+## Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### Analytics
+- Custom event tracking
+- Page view tracking
+- User identification
+- Middleware auto-tracking
+
+</td>
+<td width="50%">
+
+### Framework Integrations
+- Django middleware + decorators
+- FastAPI dependency injection
+- Flask extension
+- Async/sync client options
+
+</td>
+</tr>
+</table>
+
+## Quick Start
+
+<table>
+<tr>
+<td align="center" width="25%">
+<img src="https://api.iconify.design/lucide:download.svg?color=%236366f1" width="48"><br>
+<strong>1. Install</strong><br>
+<code>pip install entrolytics-ng</code>
+</td>
+<td align="center" width="25%">
+<img src="https://api.iconify.design/lucide:code.svg?color=%236366f1" width="48"><br>
+<strong>2. Create Client</strong><br>
+<code>Entrolytics(api_key)</code>
+</td>
+<td align="center" width="25%">
+<img src="https://api.iconify.design/lucide:settings.svg?color=%236366f1" width="48"><br>
+<strong>3. Configure</strong><br>
+Set API key and Website ID
+</td>
+<td align="center" width="25%">
+<img src="https://api.iconify.design/lucide:bar-chart-3.svg?color=%236366f1" width="48"><br>
+<strong>4. Track</strong><br>
+View analytics in dashboard
+</td>
+</tr>
+</table>
 
 ## Installation
 
 ```bash
-pip install entrolytics
+pip install entrolytics-ng
 
 # With framework integrations
-pip install entrolytics[django]
-pip install entrolytics[fastapi]
-pip install entrolytics[flask]
-pip install entrolytics[all]  # All frameworks
+pip install entrolytics-ng[django]
+pip install entrolytics-ng[fastapi]
+pip install entrolytics-ng[flask]
+pip install entrolytics-ng[all]  # All frameworks
 ```
-
-## Quick Start
 
 ```python
 from entrolytics import Entrolytics
