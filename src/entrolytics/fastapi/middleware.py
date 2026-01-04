@@ -36,7 +36,7 @@ class EntrolyticsMiddleware(BaseHTTPMiddleware):
         website_id: str,
         api_key: str,
         *,
-        host: str = "https://ng.entrolytics.click",
+        host: str = "https://entrolytics.click",
         track_paths: list[str] | None = None,
         exclude_paths: list[str] | None = None,
     ) -> None:

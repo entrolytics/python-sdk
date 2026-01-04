@@ -30,7 +30,7 @@ from entrolytics.types import (
 )
 
 
-DEFAULT_HOST = "https://ng.entrolytics.click"
+DEFAULT_HOST = "https://entrolytics.click"
 DEFAULT_TIMEOUT = 10.0
 
 
@@ -288,7 +288,7 @@ class Entrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Web Vitals (requires entrolytics-ng)
+    # Phase 2: Web Vitals (requires entrolytics)
     # ========================================================================
 
     def track_vital(
@@ -309,7 +309,7 @@ class Entrolytics:
         """
         Track a Web Vital metric.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID
@@ -363,7 +363,7 @@ class Entrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Form Analytics (requires entrolytics-ng)
+    # Phase 2: Form Analytics (requires entrolytics)
     # ========================================================================
 
     def track_form_event(
@@ -386,7 +386,7 @@ class Entrolytics:
         """
         Track a form interaction event.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID
@@ -448,7 +448,7 @@ class Entrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Deployment Tracking (requires entrolytics-ng)
+    # Phase 2: Deployment Tracking (requires entrolytics)
     # ========================================================================
 
     def set_deployment(
@@ -464,7 +464,7 @@ class Entrolytics:
         """
         Register deployment context.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID
@@ -717,7 +717,7 @@ class AsyncEntrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Web Vitals (requires entrolytics-ng)
+    # Phase 2: Web Vitals (requires entrolytics)
     # ========================================================================
 
     async def track_vital(
@@ -738,7 +738,7 @@ class AsyncEntrolytics:
         """
         Track a Web Vital metric asynchronously.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID
@@ -792,7 +792,7 @@ class AsyncEntrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Form Analytics (requires entrolytics-ng)
+    # Phase 2: Form Analytics (requires entrolytics)
     # ========================================================================
 
     async def track_form_event(
@@ -815,7 +815,7 @@ class AsyncEntrolytics:
         """
         Track a form interaction event asynchronously.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID
@@ -877,7 +877,7 @@ class AsyncEntrolytics:
             raise NetworkError(f"Request failed: {e}") from e
 
     # ========================================================================
-    # Phase 2: Deployment Tracking (requires entrolytics-ng)
+    # Phase 2: Deployment Tracking (requires entrolytics)
     # ========================================================================
 
     async def set_deployment(
@@ -893,7 +893,7 @@ class AsyncEntrolytics:
         """
         Register deployment context asynchronously.
 
-        Note: This feature requires entrolytics-ng.
+        Note: This feature requires entrolytics.
 
         Args:
             website_id: Your Entrolytics website ID

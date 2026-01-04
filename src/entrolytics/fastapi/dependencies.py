@@ -107,7 +107,7 @@ def get_entrolytics(
     website_id: str,
     api_key: str,
     *,
-    host: str = "https://ng.entrolytics.click",
+    host: str = "https://entrolytics.click",
 ):
     """
     Create a FastAPI dependency for Entrolytics tracking.

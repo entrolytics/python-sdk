@@ -3,18 +3,18 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "entrolytics-ng"
-version = "2.0.0"
+name = "entrolytics"
+version = "2.1.0"
 description = "Python SDK for Entrolytics - First-party growth analytics for the edge"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
 authors = [
-    { name = "Entrolytics", email = "hey@ng.entrolytics.click" }
+    { name = "Entrolytics", email = "hey@entrolytics.click" }
 ]
 keywords = [
     "entrolytics",
-    "entrolytics-ng",
+    "entrolytics",
     "analytics",
     "tracking",
     "web-analytics",
@@ -59,14 +59,14 @@ dev = [
     "mypy>=1.0",
 ]
 all = [
-    "entrolytics-ng[django,fastapi,flask]",
+    "entrolytics[django,fastapi,flask]",
 ]
 
 [project.urls]
-Homepage = "https://ng.entrolytics.click"
+Homepage = "https://entrolytics.click"
 Documentation = "https://docs.entrolytics.click/sdks/python"
-Repository = "https://github.com/entrolytics/entrolytics-ng/tree/main/packages/python"
-Issues = "https://github.com/entrolytics/entrolytics-ng/issues"
+Repository = "https://github.com/entrolytics/entrolytics/tree/main/packages/python"
+Issues = "https://github.com/entrolytics/entrolytics/issues"
 
 [tool.hatch.build.targets.sdist]
 include = [

@@ -29,7 +29,7 @@ Usage:
         traits={"plan": "pro"}
     )
 
-    # Phase 2: Track Web Vitals (requires entrolytics-ng)
+    # Phase 2: Track Web Vitals (requires entrolytics)
     client.track_vital(
         website_id="abc123",
         metric="LCP",
@@ -37,7 +37,7 @@ Usage:
         rating="good"
     )
 
-    # Phase 2: Track form events (requires entrolytics-ng)
+    # Phase 2: Track form events (requires entrolytics)
     client.track_form_event(
         website_id="abc123",
         event_type="submit",
@@ -46,7 +46,7 @@ Usage:
         success=True
     )
 
-    # Phase 2: Set deployment context (requires entrolytics-ng)
+    # Phase 2: Set deployment context (requires entrolytics)
     client.set_deployment(
         website_id="abc123",
         deploy_id="deploy_123",

@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/entrolytics/.github/main/media/entrov2.png" alt="Entrolytics" width="64" height="64">
 
-  [![PyPI](https://img.shields.io/pypi/v/entrolytics-ng.svg?logo=pypi&logoColor=white)](https://pypi.org/project/entrolytics-ng/)
+  [![PyPI](https://img.shields.io/pypi/v/entrolytics.svg?logo=pypi&logoColor=white)](https://pypi.org/project/entrolytics/)
   [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
   [![Python](https://img.shields.io/badge/Python-3.9+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 
@@ -11,7 +11,7 @@
 
 ## Overview
 
-**entrolytics-ng** is the official Python SDK for Entrolytics - first-party growth analytics for the edge. Track events server-side from Django, FastAPI, Flask, or any Python application.
+**entrolytics** is the official Python SDK for Entrolytics - first-party growth analytics for the edge. Track events server-side from Django, FastAPI, Flask, or any Python application.
 
 **Why use this SDK?**
 - Django, FastAPI, and Flask integrations included
@@ -51,7 +51,7 @@
 <td align="center" width="25%">
 <img src="https://api.iconify.design/lucide:download.svg?color=%236366f1" width="48"><br>
 <strong>1. Install</strong><br>
-<code>pip install entrolytics-ng</code>
+<code>pip install entrolytics</code>
 </td>
 <td align="center" width="25%">
 <img src="https://api.iconify.design/lucide:code.svg?color=%236366f1" width="48"><br>
@@ -74,13 +74,13 @@ View analytics in dashboard
 ## Installation
 
 ```bash
-pip install entrolytics-ng
+pip install entrolytics
 
 # With framework integrations
-pip install entrolytics-ng[django]
-pip install entrolytics-ng[fastapi]
-pip install entrolytics-ng[flask]
-pip install entrolytics-ng[all]  # All frameworks
+pip install entrolytics[django]
+pip install entrolytics[fastapi]
+pip install entrolytics[flask]
+pip install entrolytics[all]  # All frameworks
 ```
 
 ```python
@@ -191,7 +191,7 @@ from entrolytics import Entrolytics
 # Use edge endpoint for sub-50ms latency
 client = Entrolytics(
     api_key="ent_xxx",
-    host="https://ng.entrolytics.click",
+    host="https://entrolytics.click",
     endpoint="/api/send-native"
 )
 ```
@@ -204,12 +204,12 @@ from entrolytics import Entrolytics
 # Use Node.js endpoint for ClickHouse export and MaxMind GeoIP
 client = Entrolytics(
     api_key="ent_xxx",
-    host="https://ng.entrolytics.click",
+    host="https://entrolytics.click",
     endpoint="/api/send"
 )
 ```
 
-See the [Routing documentation](https://ng.entrolytics.click/docs/concepts/routing) for more details.
+See the [Routing documentation](https://entrolytics.click/docs/concepts/routing) for more details.
 
 ## Async Support
 
@@ -319,7 +319,7 @@ from flask import Flask
 from entrolytics.flask import FlaskEntrolytics
 
 app = Flask(__name__)
-app.config['ENTROLYTICS_NG_WEBSITE_ID'] = 'your-website-id'
+app.config['ENTROLYTICS_WEBSITE_ID'] = 'your-website-id'
 app.config['ENTROLYTICS_API_KEY'] = 'ent_xxx'
 app.config['ENTROLYTICS_AUTO_TRACK'] = True  # Optional: auto page tracking
 
@@ -420,7 +420,7 @@ except EntrolyticsError as e:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | api_key | str | Required | Your Entrolytics API key |
-| host | str | `https://ng.entrolytics.click` | Entrolytics host URL |
+| host | str | `https://entrolytics.click` | Entrolytics host URL |
 | timeout | float | 10.0 | Request timeout in seconds |
 
 ## Self-Hosted

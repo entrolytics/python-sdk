@@ -56,7 +56,7 @@ class TrackResponse:
 
 
 # ============================================================================
-# Phase 2: Web Vitals Types (requires entrolytics-ng)
+# Phase 2: Web Vitals Types (requires entrolytics)
 # ============================================================================
 
 VitalMetric = Literal["LCP", "INP", "CLS", "TTFB", "FCP"]
@@ -68,7 +68,7 @@ NavigationType = Literal[
 
 @dataclass
 class WebVitalData:
-    """Data for a Web Vital metric. Requires entrolytics-ng."""
+    """Data for a Web Vital metric. Requires entrolytics."""
 
     website_id: str
     metric: VitalMetric
@@ -84,7 +84,7 @@ class WebVitalData:
 
 
 # ============================================================================
-# Phase 2: Form Analytics Types (requires entrolytics-ng)
+# Phase 2: Form Analytics Types (requires entrolytics)
 # ============================================================================
 
 FormEventType = Literal[
@@ -94,7 +94,7 @@ FormEventType = Literal[
 
 @dataclass
 class FormEventData:
-    """Data for a form interaction event. Requires entrolytics-ng."""
+    """Data for a form interaction event. Requires entrolytics."""
 
     website_id: str
     event_type: FormEventType
@@ -112,7 +112,7 @@ class FormEventData:
 
 
 # ============================================================================
-# Phase 2: Deployment Types (requires entrolytics-ng)
+# Phase 2: Deployment Types (requires entrolytics)
 # ============================================================================
 
 DeploymentSource = Literal[
@@ -132,7 +132,7 @@ DeploymentSource = Literal[
 
 @dataclass
 class DeploymentData:
-    """Data for deployment context registration. Requires entrolytics-ng."""
+    """Data for deployment context registration. Requires entrolytics."""
 
     website_id: str
     deploy_id: str

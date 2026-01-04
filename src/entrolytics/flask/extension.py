@@ -43,7 +43,7 @@ class Entrolytics:
 
     def init_app(self, app: Flask) -> None:
         """Initialize the extension with a Flask app."""
-        app.config.setdefault("ENTROLYTICS_HOST", "https://ng.entrolytics.click")
+        app.config.setdefault("ENTROLYTICS_HOST", "https://entrolytics.click")
         app.config.setdefault("ENTROLYTICS_AUTO_TRACK", False)
         app.config.setdefault("ENTROLYTICS_EXCLUDE_PATHS", ["/static", "/health"])
 

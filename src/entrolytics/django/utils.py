@@ -17,7 +17,7 @@ def get_client() -> Entrolytics | None:
         ENTROLYTICS = {
             'WEBSITE_ID': 'your-website-id',
             'API_KEY': 'ent_xxx',
-            'HOST': 'https://ng.entrolytics.click',  # optional
+            'HOST': 'https://entrolytics.click',  # optional
         }
     """
     from django.conf import settings
@@ -28,7 +28,7 @@ def get_client() -> Entrolytics | None:
     if not api_key:
         return None
 
-    host = config.get("HOST", "https://ng.entrolytics.click")
+    host = config.get("HOST", "https://entrolytics.click")
     return Entrolytics(api_key=api_key, host=host)
 
 
