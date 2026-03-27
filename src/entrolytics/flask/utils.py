@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from flask import current_app, request, g
+from flask import current_app, g, request
 
 
 def _get_extension():
@@ -62,10 +62,7 @@ def page_view(
     user_agent = request.user_agent.string
 
     ip_address = request.headers.get("X-Forwarded-For")
-    if ip_address:
-        ip_address = ip_address.split(",")[0].strip()
-    else:
-        ip_address = request.remote_addr
+    ip_address = ip_address.split(",")[0].strip() if ip_address else request.remote_addr
 
     if not user_id:
         user_id = getattr(g, "user_id", None)

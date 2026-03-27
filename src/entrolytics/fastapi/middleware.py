@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable
+from collections.abc import Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -98,10 +98,7 @@ class EntrolyticsMiddleware(BaseHTTPMiddleware):
 
         # If track_paths is set, only track those
         if self.track_paths:
-            for included in self.track_paths:
-                if path.startswith(included):
-                    return True
-            return False
+            return any(path.startswith(included) for included in self.track_paths)
 
         return True
 

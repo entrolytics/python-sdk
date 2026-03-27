@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from flask import request, g
+from flask import g, request
 
 from entrolytics import Entrolytics as EntrolyticsClient
 
@@ -103,10 +103,7 @@ class Entrolytics:
 
         # Get IP address
         ip_address = request.headers.get("X-Forwarded-For")
-        if ip_address:
-            ip_address = ip_address.split(",")[0].strip()
-        else:
-            ip_address = request.remote_addr
+        ip_address = ip_address.split(",")[0].strip() if ip_address else request.remote_addr
 
         # Get user ID from g if set
         user_id = getattr(g, "user_id", None)
@@ -143,10 +140,7 @@ class Entrolytics:
         ip_address = None
         if request:
             ip_address = request.headers.get("X-Forwarded-For")
-            if ip_address:
-                ip_address = ip_address.split(",")[0].strip()
-            else:
-                ip_address = request.remote_addr
+            ip_address = ip_address.split(",")[0].strip() if ip_address else request.remote_addr
 
         if not user_id:
             user_id = getattr(g, "user_id", None)

@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/entrolytics/.github/main/media/entrov2.png" alt="Entrolytics" width="64" height="64">
+- <img src="https://raw.githubusercontent.com/entrolytics/.github/main/media/entrov2.png" alt="Entrolytics" width="64" height="64">
 
-  [![PyPI](https://img.shields.io/pypi/v/entrolytics.svg?logo=pypi&logoColor=white)](https://pypi.org/project/entrolytics/)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-  [![Python](https://img.shields.io/badge/Python-3.9+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+- [![PyPI](https://img.shields.io/pypi/v/entrolytics.svg?logo=pypi\&logoColor=white)](https://pypi.org/project/entrolytics/)
+- [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+- [![Python](https://img.shields.io/badge/Python-3.9+-3776AB.svg?logo=python\&logoColor=white)](https://www.python.org/)
 
 </div>
 
@@ -14,6 +14,7 @@
 **entrolytics** is the official Python SDK for Entrolytics - first-party growth analytics for the edge. Track events server-side from Django, FastAPI, Flask, or any Python application.
 
 **Why use this SDK?**
+
 - Django, FastAPI, and Flask integrations included
 - Async support with `AsyncEntrolytics` client
 - Intelligent routing to optimal collection endpoints
@@ -26,6 +27,7 @@
 <td width="50%">
 
 ### Analytics
+
 - Custom event tracking
 - Page view tracking
 - User identification
@@ -35,6 +37,7 @@
 <td width="50%">
 
 ### Framework Integrations
+
 - Django middleware + decorators
 - FastAPI dependency injection
 - Flask extension
@@ -77,10 +80,12 @@ View analytics in dashboard
 pip install entrolytics
 
 # With framework integrations
+
 pip install entrolytics[django]
 pip install entrolytics[fastapi]
 pip install entrolytics[flask]
 pip install entrolytics[all]  # All frameworks
+
 ```
 
 ```python
@@ -89,6 +94,7 @@ from entrolytics import Entrolytics
 client = Entrolytics(api_key="ent_xxx")
 
 # Track events
+
 client.track(
     website_id="abc123",
     event="purchase",
@@ -100,6 +106,7 @@ client.track(
 )
 
 # Track page views
+
 client.page_view(
     website_id="abc123",
     url="/pricing",
@@ -107,6 +114,7 @@ client.page_view(
 )
 
 # Identify users
+
 client.identify(
     website_id="abc123",
     user_id="user_456",
@@ -119,58 +127,15 @@ client.identify(
 
 ## Collection Endpoints
 
-Entrolytics provides three collection endpoints optimized for different use cases:
+This SDK uses the canonical Entrolytics ingestion contract:
 
-### `/api/collect` - Intelligent Routing (Recommended)
+### `/collect` - Event Ingestion (Default)
 
-The default endpoint that automatically routes to the optimal storage backend based on your plan and website settings.
+Used by `track`, `page_view`, and `identify` (sync and async clients).
 
-**Features:**
-- Automatic optimization (Free/Pro → Edge, Business/Enterprise → Node.js)
-- Zero configuration required
-- Best balance of performance and features
+### `/api/collect/vitals` and `/api/collect/forms` - Phase 2 Telemetry
 
-**Use when:**
-- You want automatic optimization based on your plan
-- You're using Entrolytics Cloud
-- You don't have specific latency or feature requirements
-
-### `/api/send-native` - Edge Runtime (Fastest)
-
-Direct edge endpoint for sub-50ms global latency.
-
-**Features:**
-- Sub-50ms response times globally
-- Runs on Vercel Edge Runtime
-- Upstash Redis + Neon Serverless
-- Best for high-traffic applications
-
-**Limitations:**
-- No ClickHouse export
-- Basic geo data (country-level)
-
-**Use when:**
-- Latency is critical (<50ms required)
-- You have high request volume
-- You don't need ClickHouse export
-
-### `/api/send` - Node.js Runtime (Full-Featured)
-
-Traditional Node.js endpoint with advanced capabilities.
-
-**Features:**
-- ClickHouse export support
-- MaxMind GeoIP (city-level accuracy)
-- PostgreSQL storage
-- Advanced analytics features
-
-**Latency:** 50-150ms (regional)
-
-**Use when:**
-- Self-hosted deployments without edge support
-- You need ClickHouse data export
-- You require city-level geo accuracy
-- Custom server-side analytics workflows
+Used by `track_vital` and `track_form_event` when those features are enabled in your Entrolytics backend.
 
 ## Configuration
 
@@ -179,33 +144,21 @@ Traditional Node.js endpoint with advanced capabilities.
 ```python
 from entrolytics import Entrolytics
 
-# Uses /api/collect by default
+# Uses /collect by default
+
 client = Entrolytics(api_key="ent_xxx")
 ```
 
-### Edge Runtime Endpoint
+### Custom Host
 
 ```python
 from entrolytics import Entrolytics
 
-# Use edge endpoint for sub-50ms latency
+# Point to a custom Entrolytics host (cloud or self-hosted)
+
 client = Entrolytics(
     api_key="ent_xxx",
-    host="https://entrolytics.click",
-    endpoint="/api/send-native"
-)
-```
-
-### Node.js Runtime Endpoint
-
-```python
-from entrolytics import Entrolytics
-
-# Use Node.js endpoint for ClickHouse export and MaxMind GeoIP
-client = Entrolytics(
-    api_key="ent_xxx",
-    host="https://entrolytics.click",
-    endpoint="/api/send"
+    host="https://analytics.yourdomain.com"
 )
 ```
 
@@ -229,20 +182,26 @@ async with AsyncEntrolytics(api_key="ent_xxx") as client:
 ### Configuration
 
 ```python
+
 # settings.py
+
 INSTALLED_APPS = [
     # ...
+
 ]
 
 MIDDLEWARE = [
     'entrolytics.django.EntrolyticsMiddleware',  # Add for auto page tracking
+
     # ...
+
 ]
 
 ENTROLYTICS = {
     'WEBSITE_ID': 'your-website-id',
     'API_KEY': 'ent_xxx',
     'TRACK_ADMIN': False,  # Skip admin pages
+
     'EXCLUDED_PATHS': ['/health', '/api/'],
 }
 ```
@@ -254,11 +213,13 @@ from entrolytics.django import track, identify
 
 def purchase_view(request):
     # Track purchase event
+
     track('purchase', {'revenue': 99.99}, request=request)
     return JsonResponse({'status': 'ok'})
 
 def login_view(request):
     # After successful login
+
     identify(str(request.user.pk), {
         'email': request.user.email,
         'plan': 'pro'
@@ -339,6 +300,7 @@ def purchase():
 @app.route('/login', methods=['POST'])
 def login():
     # After authentication
+
     identify(user.id, {'email': user.email})
     return redirect('/dashboard')
 ```
@@ -351,41 +313,41 @@ def login():
 
 Track a custom event.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| website_id | str | Yes | Your Entrolytics website ID |
-| event | str | Yes | Event name (e.g., 'purchase', 'signup') |
-| data | dict | No | Additional event data |
-| url | str | No | Page URL where event occurred |
-| referrer | str | No | Referrer URL |
-| user_id | str | No | User identifier |
-| session_id | str | No | Session identifier |
-| user_agent | str | No | User agent string |
-| ip_address | str | No | Client IP address |
+| Parameter   | Type | Required | Description                             |
+| ----------- | ---- | -------- | --------------------------------------- |
+| website\_id | str  | Yes      | Your Entrolytics website ID             |
+| event       | str  | Yes      | Event name (e.g., 'purchase', 'signup') |
+| data        | dict | No       | Additional event data                   |
+| url         | str  | No       | Page URL where event occurred           |
+| referrer    | str  | No       | Referrer URL                            |
+| user\_id    | str  | No       | User identifier                         |
+| session\_id | str  | No       | Session identifier                      |
+| user\_agent | str  | No       | User agent string                       |
+| ip\_address | str  | No       | Client IP address                       |
 
 #### `page_view(website_id, url, **kwargs)`
 
 Track a page view.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| website_id | str | Yes | Your Entrolytics website ID |
-| url | str | Yes | Page URL |
-| referrer | str | No | Referrer URL |
-| title | str | No | Page title |
-| user_id | str | No | User identifier |
-| user_agent | str | No | User agent string |
-| ip_address | str | No | Client IP address |
+| Parameter   | Type | Required | Description                 |
+| ----------- | ---- | -------- | --------------------------- |
+| website\_id | str  | Yes      | Your Entrolytics website ID |
+| url         | str  | Yes      | Page URL                    |
+| referrer    | str  | No       | Referrer URL                |
+| title       | str  | No       | Page title                  |
+| user\_id    | str  | No       | User identifier             |
+| user\_agent | str  | No       | User agent string           |
+| ip\_address | str  | No       | Client IP address           |
 
 #### `identify(website_id, user_id, traits=None)`
 
 Identify a user with traits.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| website_id | str | Yes | Your Entrolytics website ID |
-| user_id | str | Yes | Unique user identifier |
-| traits | dict | No | User traits (email, plan, etc.) |
+| Parameter   | Type | Required | Description                     |
+| ----------- | ---- | -------- | ------------------------------- |
+| website\_id | str  | Yes      | Your Entrolytics website ID     |
+| user\_id    | str  | Yes      | Unique user identifier          |
+| traits      | dict | No       | User traits (email, plan, etc.) |
 
 ## Error Handling
 
@@ -417,11 +379,11 @@ except EntrolyticsError as e:
 
 ## Configuration
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| api_key | str | Required | Your Entrolytics API key |
-| host | str | `https://entrolytics.click` | Entrolytics host URL |
-| timeout | float | 10.0 | Request timeout in seconds |
+| Option   | Type  | Default                     | Description                |
+| -------- | ----- | --------------------------- | -------------------------- |
+| api\_key | str   | Required                    | Your Entrolytics API key   |
+| host     | str   | `https://entrolytics.click` | Entrolytics host URL       |
+| timeout  | float | 10.0                        | Request timeout in seconds |
 
 ## Self-Hosted
 

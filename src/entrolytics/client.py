@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional
-from datetime import datetime, timezone
+from typing import Any
+from uuid import uuid4
 
 import httpx
 
@@ -15,23 +15,39 @@ from entrolytics.exceptions import (
     ValidationError,
 )
 from entrolytics.types import (
-    DeploymentData,
     DeploymentSource,
-    EventData,
-    FormEventData,
     FormEventType,
-    IdentifyData,
     NavigationType,
-    PageViewData,
     TrackResponse,
     VitalMetric,
     VitalRating,
-    WebVitalData,
 )
-
 
 DEFAULT_HOST = "https://entrolytics.click"
 DEFAULT_TIMEOUT = 10.0
+
+
+def _generate_uuid() -> str:
+    return str(uuid4())
+
+
+def _normalize_url(host: str, raw_url: str | None, fallback_path: str) -> str:
+    if raw_url and (raw_url.startswith("http://") or raw_url.startswith("https://")):
+        return raw_url
+
+    path = raw_url or fallback_path
+    if not path.startswith("/"):
+        path = f"/{path}"
+
+    return f"{host.rstrip('/')}{path}"
+
+
+def _normalize_referrer(referrer: str | None) -> str | None:
+    if not referrer:
+        return None
+    if referrer.startswith("http://") or referrer.startswith("https://"):
+        return referrer
+    return None
 
 
 class Entrolytics:
@@ -74,7 +90,7 @@ class Entrolytics:
                 base_url=self.host,
                 timeout=self.timeout,
                 headers={
-                    "Authorization": f"Bearer {self.api_key}",
+                    "x-api-key": self.api_key,
                     "Content-Type": "application/json",
                     "User-Agent": "entrolytics-python/1.1.0",
                 },
@@ -95,7 +111,7 @@ class Entrolytics:
 
     def _handle_response(self, response: httpx.Response) -> TrackResponse:
         """Handle API response and raise appropriate exceptions."""
-        if response.status_code == 200 or response.status_code == 201:
+        if response.status_code in (200, 201, 202):
             return TrackResponse(success=True)
 
         if response.status_code == 401:
@@ -155,32 +171,32 @@ class Entrolytics:
         if not event:
             raise ValidationError("event is required")
 
-        payload = {
-            "type": "event",
-            "payload": {
-                "website": website_id,
-                "name": event,
-                "data": data or {},
-                "url": url,
-                "referrer": referrer,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
+        properties = dict(data or {})
+        if user_id:
+            properties["distinctId"] = user_id
+
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": session_id or _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/track"),
+            "eventType": "custom_event",
+            "eventName": event,
+            "properties": properties,
         }
 
-        # Add optional fields
-        if user_id:
-            payload["payload"]["userId"] = user_id
-        if session_id:
-            payload["payload"]["sessionId"] = session_id
+        normalized_referrer = _normalize_referrer(referrer)
+        if normalized_referrer:
+            payload["referrer"] = normalized_referrer
 
         headers = {}
         if user_agent:
-            headers["X-Forwarded-User-Agent"] = user_agent
+            headers["User-Agent"] = user_agent
         if ip_address:
             headers["X-Forwarded-For"] = ip_address
 
         try:
-            response = self.client.post("/api/send", json=payload, headers=headers)
+            response = self.client.post("/collect", json=payload, headers=headers)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -218,33 +234,33 @@ class Entrolytics:
         if not url:
             raise ValidationError("url is required")
 
-        payload = {
-            "type": "event",
-            "payload": {
-                "website": website_id,
-                "name": "$pageview",
-                "url": url,
-                "referrer": referrer,
-                "data": {},
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
+        properties: dict[str, Any] = {}
+        if title:
+            properties["title"] = title
+        if user_id:
+            properties["distinctId"] = user_id
+
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": session_id or _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/"),
+            "eventType": "pageview",
+            "properties": properties,
         }
 
-        if title:
-            payload["payload"]["data"]["title"] = title
-        if user_id:
-            payload["payload"]["userId"] = user_id
-        if session_id:
-            payload["payload"]["sessionId"] = session_id
+        normalized_referrer = _normalize_referrer(referrer)
+        if normalized_referrer:
+            payload["referrer"] = normalized_referrer
 
         headers = {}
         if user_agent:
-            headers["X-Forwarded-User-Agent"] = user_agent
+            headers["User-Agent"] = user_agent
         if ip_address:
             headers["X-Forwarded-For"] = ip_address
 
         try:
-            response = self.client.post("/api/send", json=payload, headers=headers)
+            response = self.client.post("/collect", json=payload, headers=headers)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -271,18 +287,21 @@ class Entrolytics:
         if not user_id:
             raise ValidationError("user_id is required")
 
-        payload = {
-            "type": "identify",
-            "payload": {
-                "website": website_id,
-                "userId": user_id,
-                "traits": traits or {},
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, "/identify", "/identify"),
+            "eventType": "custom_event",
+            "eventName": "identify",
+            "properties": {
+                "distinctId": user_id,
+                **(traits or {}),
             },
         }
 
         try:
-            response = self.client.post("/api/send", json=payload)
+            response = self.client.post("/collect", json=payload)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -305,6 +324,7 @@ class Entrolytics:
         url: str | None = None,
         path: str | None = None,
         session_id: str | None = None,
+        visitor_id: str | None = None,
     ) -> TrackResponse:
         """
         Track a Web Vital metric.
@@ -335,26 +355,14 @@ class Entrolytics:
             raise ValidationError("rating is required (good, needs-improvement, or poor)")
 
         payload: dict[str, Any] = {
-            "website": website_id,
-            "metric": metric,
-            "value": value,
-            "rating": rating,
+            "websiteId": website_id,
+            "visitorId": visitor_id or _generate_uuid(),
+            "sessionId": session_id or _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/vital"),
+            "path": path or "/vital",
+            "metricName": metric,
+            "metricValue": value,
         }
-
-        if delta is not None:
-            payload["delta"] = delta
-        if id:
-            payload["id"] = id
-        if navigation_type:
-            payload["navigationType"] = navigation_type
-        if attribution:
-            payload["attribution"] = attribution
-        if url:
-            payload["url"] = url
-        if path:
-            payload["path"] = path
-        if session_id:
-            payload["sessionId"] = session_id
 
         try:
             response = self.client.post("/api/collect/vitals", json=payload)
@@ -382,6 +390,7 @@ class Entrolytics:
         error_message: str | None = None,
         success: bool | None = None,
         session_id: str | None = None,
+        visitor_id: str | None = None,
     ) -> TrackResponse:
         """
         Track a form interaction event.
@@ -416,7 +425,9 @@ class Entrolytics:
             raise ValidationError("url_path is required")
 
         payload: dict[str, Any] = {
-            "website": website_id,
+            "websiteId": website_id,
+            "visitorId": visitor_id or _generate_uuid(),
+            "sessionId": session_id or _generate_uuid(),
             "eventType": event_type,
             "formId": form_id,
             "urlPath": url_path,
@@ -438,9 +449,6 @@ class Entrolytics:
             payload["errorMessage"] = error_message
         if success is not None:
             payload["success"] = success
-        if session_id:
-            payload["sessionId"] = session_id
-
         try:
             response = self.client.post("/api/collect/forms", json=payload)
             return self._handle_response(response)
@@ -545,7 +553,7 @@ class AsyncEntrolytics:
                 base_url=self.host,
                 timeout=self.timeout,
                 headers={
-                    "Authorization": f"Bearer {self.api_key}",
+                    "x-api-key": self.api_key,
                     "Content-Type": "application/json",
                     "User-Agent": "entrolytics-python/1.0.0",
                 },
@@ -566,7 +574,7 @@ class AsyncEntrolytics:
 
     def _handle_response(self, response: httpx.Response) -> TrackResponse:
         """Handle API response and raise appropriate exceptions."""
-        if response.status_code == 200 or response.status_code == 201:
+        if response.status_code in (200, 201, 202):
             return TrackResponse(success=True)
 
         if response.status_code == 401:
@@ -610,31 +618,32 @@ class AsyncEntrolytics:
         if not event:
             raise ValidationError("event is required")
 
-        payload = {
-            "type": "event",
-            "payload": {
-                "website": website_id,
-                "name": event,
-                "data": data or {},
-                "url": url,
-                "referrer": referrer,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
+        properties = dict(data or {})
+        if user_id:
+            properties["distinctId"] = user_id
+
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": session_id or _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/track"),
+            "eventType": "custom_event",
+            "eventName": event,
+            "properties": properties,
         }
 
-        if user_id:
-            payload["payload"]["userId"] = user_id
-        if session_id:
-            payload["payload"]["sessionId"] = session_id
+        normalized_referrer = _normalize_referrer(referrer)
+        if normalized_referrer:
+            payload["referrer"] = normalized_referrer
 
         headers = {}
         if user_agent:
-            headers["X-Forwarded-User-Agent"] = user_agent
+            headers["User-Agent"] = user_agent
         if ip_address:
             headers["X-Forwarded-For"] = ip_address
 
         try:
-            response = await self.client.post("/api/send", json=payload, headers=headers)
+            response = await self.client.post("/collect", json=payload, headers=headers)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -657,33 +666,33 @@ class AsyncEntrolytics:
         if not url:
             raise ValidationError("url is required")
 
-        payload = {
-            "type": "event",
-            "payload": {
-                "website": website_id,
-                "name": "$pageview",
-                "url": url,
-                "referrer": referrer,
-                "data": {},
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
+        properties: dict[str, Any] = {}
+        if title:
+            properties["title"] = title
+        if user_id:
+            properties["distinctId"] = user_id
+
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": session_id or _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/"),
+            "eventType": "pageview",
+            "properties": properties,
         }
 
-        if title:
-            payload["payload"]["data"]["title"] = title
-        if user_id:
-            payload["payload"]["userId"] = user_id
-        if session_id:
-            payload["payload"]["sessionId"] = session_id
+        normalized_referrer = _normalize_referrer(referrer)
+        if normalized_referrer:
+            payload["referrer"] = normalized_referrer
 
         headers = {}
         if user_agent:
-            headers["X-Forwarded-User-Agent"] = user_agent
+            headers["User-Agent"] = user_agent
         if ip_address:
             headers["X-Forwarded-For"] = ip_address
 
         try:
-            response = await self.client.post("/api/send", json=payload, headers=headers)
+            response = await self.client.post("/collect", json=payload, headers=headers)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -700,18 +709,21 @@ class AsyncEntrolytics:
         if not user_id:
             raise ValidationError("user_id is required")
 
-        payload = {
-            "type": "identify",
-            "payload": {
-                "website": website_id,
-                "userId": user_id,
-                "traits": traits or {},
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+        payload: dict[str, Any] = {
+            "websiteId": website_id,
+            "sessionId": _generate_uuid(),
+            "visitorId": _generate_uuid(),
+            "url": _normalize_url(self.host, "/identify", "/identify"),
+            "eventType": "custom_event",
+            "eventName": "identify",
+            "properties": {
+                "distinctId": user_id,
+                **(traits or {}),
             },
         }
 
         try:
-            response = await self.client.post("/api/send", json=payload)
+            response = await self.client.post("/collect", json=payload)
             return self._handle_response(response)
         except httpx.RequestError as e:
             raise NetworkError(f"Request failed: {e}") from e
@@ -734,6 +746,7 @@ class AsyncEntrolytics:
         url: str | None = None,
         path: str | None = None,
         session_id: str | None = None,
+        visitor_id: str | None = None,
     ) -> TrackResponse:
         """
         Track a Web Vital metric asynchronously.
@@ -764,26 +777,14 @@ class AsyncEntrolytics:
             raise ValidationError("rating is required (good, needs-improvement, or poor)")
 
         payload: dict[str, Any] = {
-            "website": website_id,
-            "metric": metric,
-            "value": value,
-            "rating": rating,
+            "websiteId": website_id,
+            "visitorId": visitor_id or _generate_uuid(),
+            "sessionId": session_id or _generate_uuid(),
+            "url": _normalize_url(self.host, url, "/vital"),
+            "path": path or "/vital",
+            "metricName": metric,
+            "metricValue": value,
         }
-
-        if delta is not None:
-            payload["delta"] = delta
-        if id:
-            payload["id"] = id
-        if navigation_type:
-            payload["navigationType"] = navigation_type
-        if attribution:
-            payload["attribution"] = attribution
-        if url:
-            payload["url"] = url
-        if path:
-            payload["path"] = path
-        if session_id:
-            payload["sessionId"] = session_id
 
         try:
             response = await self.client.post("/api/collect/vitals", json=payload)
@@ -811,6 +812,7 @@ class AsyncEntrolytics:
         error_message: str | None = None,
         success: bool | None = None,
         session_id: str | None = None,
+        visitor_id: str | None = None,
     ) -> TrackResponse:
         """
         Track a form interaction event asynchronously.
@@ -845,7 +847,9 @@ class AsyncEntrolytics:
             raise ValidationError("url_path is required")
 
         payload: dict[str, Any] = {
-            "website": website_id,
+            "websiteId": website_id,
+            "visitorId": visitor_id or _generate_uuid(),
+            "sessionId": session_id or _generate_uuid(),
             "eventType": event_type,
             "formId": form_id,
             "urlPath": url_path,
@@ -867,9 +871,6 @@ class AsyncEntrolytics:
             payload["errorMessage"] = error_message
         if success is not None:
             payload["success"] = success
-        if session_id:
-            payload["sessionId"] = session_id
-
         try:
             response = await self.client.post("/api/collect/forms", json=payload)
             return self._handle_response(response)

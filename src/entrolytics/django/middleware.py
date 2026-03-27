@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
 import logging
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from entrolytics.django.utils import get_client
 
@@ -64,9 +65,8 @@ class EntrolyticsMiddleware:
         path = request.path
 
         # Skip admin pages
-        if not config.get("TRACK_ADMIN", False):
-            if path.startswith("/admin"):
-                return False
+        if not config.get("TRACK_ADMIN", False) and path.startswith("/admin"):
+            return False
 
         # Skip static/media files
         if not config.get("TRACK_STATIC", False):
@@ -77,11 +77,7 @@ class EntrolyticsMiddleware:
 
         # Check excluded paths
         excluded = config.get("EXCLUDED_PATHS", [])
-        for excluded_path in excluded:
-            if path.startswith(excluded_path):
-                return False
-
-        return True
+        return all(not path.startswith(excluded_path) for excluded_path in excluded)
 
     def _track_page_view(self, request: HttpRequest) -> None:
         """Track a page view for the request."""

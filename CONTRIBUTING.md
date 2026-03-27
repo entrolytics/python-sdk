@@ -20,24 +20,33 @@ Please read the main [Contributing Guide](../CONTRIBUTING.md) in the root of thi
 ```
 entro-python/
 ├── src/          # Source code
+
 ├── dist/         # Built output (generated)
+
 ├── package.json  # Package manifest
+
 └── README.md     # Package documentation
+
 ```
 
 ### Development Commands
 
 ```bash
+
 # Install in development mode
+
 pip install -e ".[dev]"
 
 # Run tests
+
 pytest
 
 # Lint
+
 ruff check .
 
 # Type check
+
 mypy src
 ```
 

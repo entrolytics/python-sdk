@@ -1,8 +1,7 @@
 """Type definitions for Entrolytics SDK."""
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 
 @dataclass
@@ -12,13 +11,13 @@ class EventData:
     website_id: str
     event: str
     data: dict[str, Any] = field(default_factory=dict)
-    url: Optional[str] = None
-    referrer: Optional[str] = None
-    user_id: Optional[str] = None
-    session_id: Optional[str] = None
-    user_agent: Optional[str] = None
-    ip_address: Optional[str] = None
-    timestamp: Optional[str] = None
+    url: str | None = None
+    referrer: str | None = None
+    user_id: str | None = None
+    session_id: str | None = None
+    user_agent: str | None = None
+    ip_address: str | None = None
+    timestamp: str | None = None
 
 
 @dataclass
@@ -27,13 +26,13 @@ class PageViewData:
 
     website_id: str
     url: str
-    referrer: Optional[str] = None
-    title: Optional[str] = None
-    user_id: Optional[str] = None
-    session_id: Optional[str] = None
-    user_agent: Optional[str] = None
-    ip_address: Optional[str] = None
-    timestamp: Optional[str] = None
+    referrer: str | None = None
+    title: str | None = None
+    user_id: str | None = None
+    session_id: str | None = None
+    user_agent: str | None = None
+    ip_address: str | None = None
+    timestamp: str | None = None
 
 
 @dataclass
@@ -43,7 +42,7 @@ class IdentifyData:
     website_id: str
     user_id: str
     traits: dict[str, Any] = field(default_factory=dict)
-    timestamp: Optional[str] = None
+    timestamp: str | None = None
 
 
 @dataclass
@@ -51,8 +50,8 @@ class TrackResponse:
     """Response from tracking API."""
 
     success: bool
-    message: Optional[str] = None
-    error: Optional[str] = None
+    message: str | None = None
+    error: str | None = None
 
 
 # ============================================================================
@@ -74,13 +73,13 @@ class WebVitalData:
     metric: VitalMetric
     value: float
     rating: VitalRating
-    delta: Optional[float] = None
-    id: Optional[str] = None
-    navigation_type: Optional[NavigationType] = None
-    attribution: Optional[dict[str, Any]] = None
-    url: Optional[str] = None
-    path: Optional[str] = None
-    session_id: Optional[str] = None
+    delta: float | None = None
+    id: str | None = None
+    navigation_type: NavigationType | None = None
+    attribution: dict[str, Any] | None = None
+    url: str | None = None
+    path: str | None = None
+    session_id: str | None = None
 
 
 # ============================================================================
@@ -100,15 +99,15 @@ class FormEventData:
     event_type: FormEventType
     form_id: str
     url_path: str
-    form_name: Optional[str] = None
-    field_name: Optional[str] = None
-    field_type: Optional[str] = None
-    field_index: Optional[int] = None
-    time_on_field: Optional[int] = None
-    time_since_start: Optional[int] = None
-    error_message: Optional[str] = None
-    success: Optional[bool] = None
-    session_id: Optional[str] = None
+    form_name: str | None = None
+    field_name: str | None = None
+    field_type: str | None = None
+    field_index: int | None = None
+    time_on_field: int | None = None
+    time_since_start: int | None = None
+    error_message: str | None = None
+    success: bool | None = None
+    session_id: str | None = None
 
 
 # ============================================================================
@@ -136,7 +135,7 @@ class DeploymentData:
 
     website_id: str
     deploy_id: str
-    git_sha: Optional[str] = None
-    git_branch: Optional[str] = None
-    deploy_url: Optional[str] = None
-    source: Optional[DeploymentSource] = None
+    git_sha: str | None = None
+    git_branch: str | None = None
+    deploy_url: str | None = None
+    source: DeploymentSource | None = None

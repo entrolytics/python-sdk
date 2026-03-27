@@ -1,10 +1,10 @@
 """FastAPI integration for Entrolytics."""
 
-from entrolytics.fastapi.middleware import EntrolyticsMiddleware
 from entrolytics.fastapi.dependencies import (
-    get_entrolytics,
     EntrolyticsTracker,
+    get_entrolytics,
 )
+from entrolytics.fastapi.middleware import EntrolyticsMiddleware
 
 __all__ = [
     "EntrolyticsMiddleware",

@@ -55,31 +55,31 @@ Usage:
     )
 """
 
-from entrolytics.client import Entrolytics, AsyncEntrolytics
+from entrolytics.client import AsyncEntrolytics, Entrolytics
 from entrolytics.exceptions import (
-    EntrolyticsError,
     AuthenticationError,
-    ValidationError,
-    RateLimitError,
+    EntrolyticsError,
     NetworkError,
+    RateLimitError,
+    ValidationError,
 )
 from entrolytics.types import (
+    DeploymentData,
+    # Phase 2: Deployment types
+    DeploymentSource,
     # Core types
     EventData,
-    PageViewData,
+    FormEventData,
+    # Phase 2: Form Analytics types
+    FormEventType,
     IdentifyData,
+    NavigationType,
+    PageViewData,
     TrackResponse,
     # Phase 2: Web Vitals types
     VitalMetric,
     VitalRating,
-    NavigationType,
     WebVitalData,
-    # Phase 2: Form Analytics types
-    FormEventType,
-    FormEventData,
-    # Phase 2: Deployment types
-    DeploymentSource,
-    DeploymentData,
 )
 
 __version__ = "1.1.0"
