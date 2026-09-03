@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
 
@@ -23,7 +24,7 @@ from entrolytics.types import (
     VitalRating,
 )
 
-DEFAULT_HOST = "https://entrolytics.click"
+DEFAULT_HOST = "https://api.entrolytics.click"
 DEFAULT_TIMEOUT = 10.0
 
 
@@ -177,6 +178,8 @@ class Entrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": session_id or _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, url, "/track"),
@@ -242,6 +245,8 @@ class Entrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": session_id or _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, url, "/"),
@@ -289,6 +294,8 @@ class Entrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, "/identify", "/identify"),
@@ -624,6 +631,8 @@ class AsyncEntrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": session_id or _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, url, "/track"),
@@ -674,6 +683,8 @@ class AsyncEntrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": session_id or _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, url, "/"),
@@ -711,6 +722,8 @@ class AsyncEntrolytics:
 
         payload: dict[str, Any] = {
             "websiteId": website_id,
+            "eventId": _generate_uuid(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "sessionId": _generate_uuid(),
             "visitorId": _generate_uuid(),
             "url": _normalize_url(self.host, "/identify", "/identify"),
